@@ -52,17 +52,17 @@ function check_raylib()
 end
 
 function check_imgui()
-	if(os.isdir("imgui") == false and os.isdir("imgui-master") == false) then
-		if(not os.isfile("imgui-master.zip")) then
-			print("imgui not found, downloading from github")
-			local result_str, response_code = http.download("https://github.com/ocornut/imgui/archive/refs/heads/master.zip", "imgui-master.zip", {
+	if(os.isdir("imgui") == false and os.isdir("imgui-docking") == false) then
+		if(not os.isfile("imgui-docking.zip")) then
+			print("imgui docking branch not found, downloading from github")
+			local result_str, response_code = http.download("https://github.com/ocornut/imgui/archive/refs/heads/docking.zip", "imgui-docking.zip", {
 				progress = download_progress,
 				headers = { "From: Premake", "Referer: Premake" }
 			})
 		end
 		print("Unzipping to " ..  os.getcwd())
-		zip.extract("imgui-master.zip", os.getcwd())
-		os.remove("imgui-master.zip")
+		zip.extract("imgui-docking.zip", os.getcwd())
+		os.remove("imgui-docking.zip")
 	end
 end
 
@@ -74,11 +74,15 @@ workspace "rlImGui"
 	filter "configurations:Debug"
 		defines { "DEBUG" }
 		symbols "On"
-		
+        runtime "Debug"
+        staticruntime "On"
+
 	filter "configurations:Release"
 		defines { "NDEBUG" }
 		optimize "On"	
-		
+        runtime "Release"
+        staticruntime "On"
+
 	filter { "platforms:x64" }
 		architecture "x86_64"
 
@@ -104,123 +108,26 @@ project "rlImGui"
 	cdialect "C99"
 	cppdialect "C++17"
 	include_raylib()
-	includedirs { "rlImGui", "imgui", "imgui-master"}
+	includedirs { "rlImGui", "imgui", "imgui-docking"}
 	vpaths 
 	{
 		["Header Files"] = { "*.h"},
 		["Source Files"] = {"*.cpp"},
-		["ImGui Files"] = { "imgui/*.h","imgui/*.cpp", "imgui-master/*.h","imgui-master/*.cpp" },
+		["ImGui Files"] = { "imgui/*.h","imgui/*.cpp", "imgui-docking/*.h","imgui-docking/*.cpp" },
 	}
-	files {"imgui-master/*.h", "imgui-master/*.cpp", "imgui/*.h", "imgui/*.cpp", "*.cpp", "*.h", "extras/**.h"}
+	files {
+        "imgui-docking/*.h", 
+        "imgui-docking/*.cpp", 
+        "imgui/*.h", 
+        "imgui/*.cpp", 
+        "*.cpp", 
+        "*.h", 
+        "extras/**.h"
+    }
 
-	defines {"IMGUI_DISABLE_OBSOLETE_FUNCTIONS","IMGUI_DISABLE_OBSOLETE_KEYIO"}
+	defines {
+        "IMGUI_DISABLE_OBSOLETE_FUNCTIONS",
+        "IMGUI_DISABLE_OBSOLETE_KEYIO"
+    }
 
-group "Examples"
-project "simple"
-	kind "ConsoleApp"
-	language "C++"
-	cdialect "C99"
-	cppdialect "C++17"
-	location "build"
-	targetdir "bin/%{cfg.buildcfg}"
-	
-	vpaths 
-	{
-		["Header Files"] = { "examples/**.h"},
-		["Source Files"] = {"examples/**.cpp", "examples/**.c"},
-	}
-	files {"examples/simple.cpp"}
-	link_raylib()
-	links {"rlImGui"}
-	includedirs {"./", "imgui", "imgui-master" }
-		
-    filter "action:vs*"
-		debugdir "$(SolutionDir)"	
-	
-		
-project "editor"
-	kind "ConsoleApp"
-	language "C++"
-	cdialect "C99"
-	cppdialect "C++17"
-	location "build"
-	targetdir "bin/%{cfg.buildcfg}"
-
-
-	vpaths 
-	{
-		["Header Files"] = { "examples/**.h"},
-		["Source Files"] = {"examples/**.cpp", "examples/**.c"},
-	}
-	files {"examples/editor.cpp"}
-	link_raylib()
-	links {"rlImGui"}
-	includedirs {"./", "imgui", "imgui-master" }
-
-    filter "action:vs*"
-		debugdir "$(SolutionDir)"	
-        
-        
-project "imgui_style_example"
-	kind "ConsoleApp"
-	language "C++"
-	cdialect "C99"
-	cppdialect "C++17"
-	location "build"
-	targetdir "bin/%{cfg.buildcfg}"
-	
-	vpaths 
-	{
-		["Header Files"] = { "examples/**.h"},
-		["Source Files"] = {"examples/**.cpp", "examples/**.c"},
-	}
-	files {"examples/imgui_style_example.cpp"}
-	link_raylib()
-	links {"rlImGui"}
-	includedirs {"./", "imgui", "imgui-master" }
-		
-    filter "action:vs*"
-		debugdir "$(SolutionDir)"
-	
-project "docking_example"
-	kind "ConsoleApp"
-	language "C++"
-	cdialect "C99"
-	cppdialect "C++17"
-	location "build"
-	targetdir "bin/%{cfg.buildcfg}"
-	
-	vpaths 
-	{
-		["Header Files"] = { "examples/**.h"},
-		["Source Files"] = {"examples/**.cpp", "examples/**.c"},
-	}
-	files {"examples/docking_example.cpp"}
-	link_raylib()
-	links {"rlImGui"}
-	includedirs {"./", "imgui", "imgui-master" }
-		
-    filter "action:vs*"
-		debugdir "$(SolutionDir)"
-
-project "asset_browser"
-	kind "ConsoleApp"
-	language "C++"
-	cdialect "C99"
-	cppdialect "C++17"
-	location "build"
-	targetdir "bin/%{cfg.buildcfg}"
-	
-	vpaths 
-	{
-		["Header Files"] = { "examples/asset_browser/**.h"},
-		["Source Files"] = {"examples/asset_browser/**.cpp", "examples/asset_browser/**.c"},
-	}
-	files {"examples/asset_browser/**.cpp", "examples/asset_browser/**.h"}
-	link_raylib()
-	links {"rlImGui"}
-	includedirs {"./", "examples/asset_browser/", "imgui", "imgui-master" }
-		
-    filter "action:vs*"
-		debugdir "$(SolutionDir)"
-		
+    staticruntime "On"

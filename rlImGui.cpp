@@ -424,6 +424,10 @@ void rlImGuiSetup(bool dark)
 {
     rlImGuiBeginInitImGui();
 
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; 
+
     if (dark)
         ImGui::StyleColorsDark();
     else
