@@ -36,34 +36,56 @@ function download_progress(total, current)
 	print("Download progress (" .. percent .. "%/100%)")
 end
 
+-- function check_raylib()
+-- 	if(os.isdir("raylib") == false and os.isdir("raylib-master") == false) then
+-- 		if(not os.isfile("raylib-master.zip")) then
+-- 			print("Raylib not found, downloading from github")
+-- 			local result_str, response_code = http.download("https://github.com/raysan5/raylib/archive/refs/heads/master.zip", "raylib-master.zip", {
+-- 				progress = download_progress,
+-- 				headers = { "From: Premake", "Referer: Premake" }
+-- 			})
+-- 		end
+-- 		print("Unzipping to " ..  os.getcwd())
+-- 		zip.extract("raylib-master.zip", os.getcwd())
+-- 		os.remove("raylib-master.zip")
+-- 	end
+-- end
+--
+-- function check_imgui()
+-- 	if(os.isdir("imgui") == false and os.isdir("imgui-docking") == false) then
+-- 		if(not os.isfile("imgui-docking.zip")) then
+-- 			print("imgui docking branch not found, downloading from github")
+-- 			local result_str, response_code = http.download("https://github.com/ocornut/imgui/archive/refs/heads/docking.zip", "imgui-docking.zip", {
+-- 				progress = download_progress,
+-- 				headers = { "From: Premake", "Referer: Premake" }
+-- 			})
+-- 		end
+-- 		print("Unzipping to " ..  os.getcwd())
+-- 		zip.extract("imgui-docking.zip", os.getcwd())
+-- 		os.remove("imgui-docking.zip")
+-- 	end
+-- end
+
 function check_raylib()
-	if(os.isdir("raylib") == false and os.isdir("raylib-master") == false) then
-		if(not os.isfile("raylib-master.zip")) then
-			print("Raylib not found, downloading from github")
-			local result_str, response_code = http.download("https://github.com/raysan5/raylib/archive/refs/heads/master.zip", "raylib-master.zip", {
-				progress = download_progress,
-				headers = { "From: Premake", "Referer: Premake" }
-			})
-		end
-		print("Unzipping to " ..  os.getcwd())
-		zip.extract("raylib-master.zip", os.getcwd())
-		os.remove("raylib-master.zip")
-	end
+    if os.isdir("raylib") == false then
+        print("Raylib not found, cloning from GitHub")
+        os.execute("git clone https://github.com/raysan5/raylib.git raylib")
+    end
+    
+    print("Checking out specific Raylib commit")
+    local commit_hash = "f8f70d41f13d98c3f22ce472ac291b95cae9e991" -- Replace with the desired hash
+    os.execute("cd raylib && git fetch && git checkout " .. commit_hash)
 end
 
 function check_imgui()
-	if(os.isdir("imgui") == false and os.isdir("imgui-docking") == false) then
-		if(not os.isfile("imgui-docking.zip")) then
-			print("imgui docking branch not found, downloading from github")
-			local result_str, response_code = http.download("https://github.com/ocornut/imgui/archive/refs/heads/docking.zip", "imgui-docking.zip", {
-				progress = download_progress,
-				headers = { "From: Premake", "Referer: Premake" }
-			})
-		end
-		print("Unzipping to " ..  os.getcwd())
-		zip.extract("imgui-docking.zip", os.getcwd())
-		os.remove("imgui-docking.zip")
-	end
+    if os.isdir("imgui") == false then
+        print("ImGui not found, cloning from GitHub")
+        os.execute("git clone https://github.com/ocornut/imgui.git imgui")
+    end
+    
+    print("Checking out specific ImGui commit")
+    local commit_hash = "f8f70d41f13d98c3f22ce472ac291b95cae9e991" -- Replace with the desired hash
+    os.execute("cd imgui && git fetch && git checkout " .. commit_hash)
 end
 
 workspace "rlImGui"
